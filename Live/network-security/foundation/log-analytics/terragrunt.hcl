@@ -4,7 +4,7 @@ include "root" {
 }
 
 terraform {
-  source = "${include.root.locals.module_source_prefix}/log_analytics_workspace?ref=${include.root.locals.module_ref}"
+  source = "${include.root.locals.module_source_prefix}/log_analytics_workspace${include.root.locals.module_source_ref_query}"
 }
 
 dependency "resource_group" {
@@ -15,7 +15,7 @@ dependency "resource_group" {
     location = include.root.locals.region.location
   }
 
-  mock_outputs_allowed_terraform_commands = ["validate", "plan"]
+  mock_outputs_allowed_terraform_commands = ["init", "validate", "plan"]
 }
 
 locals {

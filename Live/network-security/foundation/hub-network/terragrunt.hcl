@@ -4,7 +4,7 @@ include "root" {
 }
 
 terraform {
-  source = "${include.root.locals.module_source_prefix}/virtual_network_v2?ref=${include.root.locals.module_ref}"
+  source = "${include.root.locals.module_source_prefix}/virtual_network_v2${include.root.locals.module_source_ref_query}"
 }
 
 dependency "resource_group" {
@@ -14,7 +14,7 @@ dependency "resource_group" {
     name = "RG-CUS-PLATFORM-1-FIREWALL-FOUNDATION-DEV"
   }
 
-  mock_outputs_allowed_terraform_commands = ["validate", "plan"]
+  mock_outputs_allowed_terraform_commands = ["init", "validate", "plan"]
 }
 
 locals {

@@ -9,7 +9,7 @@ locals {
 }
 
 terraform {
-  source = local.vm.enabled ? "${include.root.locals.module_source_prefix}/linux_vm?ref=${include.root.locals.module_ref}" : "${include.root.locals.module_source_prefix}/noop?ref=${include.root.locals.module_ref}"
+  source = local.vm.enabled ? "${include.root.locals.module_source_prefix}/linux_vm${include.root.locals.module_source_ref_query}" : "${include.root.locals.module_source_prefix}/noop${include.root.locals.module_source_ref_query}"
 }
 
 dependency "resource_group" {
@@ -19,7 +19,7 @@ dependency "resource_group" {
     name = "RG-CUS-PLATFORM-1-FIREWALL-FOUNDATION-DEV"
   }
 
-  mock_outputs_allowed_terraform_commands = ["validate", "plan"]
+  mock_outputs_allowed_terraform_commands = ["init", "validate", "plan"]
 }
 
 dependency "spoke_network" {
@@ -37,7 +37,7 @@ dependency "spoke_network" {
     }
   }
 
-  mock_outputs_allowed_terraform_commands = ["validate", "plan"]
+  mock_outputs_allowed_terraform_commands = ["init", "validate", "plan"]
 }
 
 inputs = jsondecode(local.vm.enabled ? jsonencode({

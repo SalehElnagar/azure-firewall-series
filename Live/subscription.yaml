@@ -9,5 +9,4 @@ backend:
   state_key_prefix: "azure/mvp"
 
 modules:
-  source_prefix: "git::ssh://git@github.com/SalehElnagar/azure-firewall-series.git//Modules"
-  ref: "article-01-foundation"
+  ref: "article-02-foundation-v3"

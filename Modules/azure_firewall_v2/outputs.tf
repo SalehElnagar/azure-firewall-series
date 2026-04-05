@@ -33,6 +33,11 @@ output "resource_group_name" {
   description = "The resource group containing the firewall."
 }
 
+output "firewall_policy_id" {
+  value       = azurerm_firewall.this.firewall_policy_id
+  description = "The firewall policy associated with the firewall."
+}
+
 output "tags" {
   value       = azurerm_firewall.this.tags
   description = "The tags applied to the firewall."

@@ -4,7 +4,7 @@ include "root" {
 }
 
 terraform {
-  source = "${include.root.locals.module_source_prefix}/virtual_network_v2?ref=${include.root.locals.module_ref}"
+  source = "${include.root.locals.module_source_prefix}/virtual_network_v2${include.root.locals.module_source_ref_query}"
 }
 
 dependency "resource_group" {
@@ -14,7 +14,17 @@ dependency "resource_group" {
     name = "RG-CUS-PLATFORM-1-FIREWALL-FOUNDATION-DEV"
   }
 
-  mock_outputs_allowed_terraform_commands = ["validate", "plan"]
+  mock_outputs_allowed_terraform_commands = ["init", "validate", "plan"]
+}
+
+dependency "firewall" {
+  config_path = "../firewall"
+
+  mock_outputs = {
+    private_ip_address = "10.10.0.4"
+  }
+
+  mock_outputs_allowed_terraform_commands = ["init", "validate", "plan"]
 }
 
 locals {
@@ -34,7 +44,9 @@ inputs = {
   purpose               = local.spoke.purpose
   attributes            = local.spoke.attributes
   address_space         = local.spoke.address_space
-  dns_servers           = try(local.spoke.dns_servers, [])
-  subnets               = local.spoke.subnets
-  tags                  = include.root.locals.merged_tags
+  dns_servers = try(local.spoke.use_firewall_dns_proxy, false) ? [
+    dependency.firewall.outputs.private_ip_address
+  ] : try(local.spoke.dns_servers, [])
+  subnets = local.spoke.subnets
+  tags    = include.root.locals.merged_tags
 }

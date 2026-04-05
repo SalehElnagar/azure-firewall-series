@@ -3,6 +3,7 @@
 .vscode/
 .agents/
 .temp/
+Live/subscription.local.yaml
 
 # Terraform and Terragrunt working data.
 .terraform/

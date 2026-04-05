@@ -4,7 +4,7 @@ include "root" {
 }
 
 terraform {
-  source = "${include.root.locals.module_source_prefix}/diagnostic_settings?ref=${include.root.locals.module_ref}"
+  source = "${include.root.locals.module_source_prefix}/diagnostic_settings${include.root.locals.module_source_ref_query}"
 }
 
 dependency "firewall" {
@@ -14,7 +14,7 @@ dependency "firewall" {
     id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mock-rg/providers/Microsoft.Network/azureFirewalls/mock-firewall"
   }
 
-  mock_outputs_allowed_terraform_commands = ["validate", "plan"]
+  mock_outputs_allowed_terraform_commands = ["init", "validate", "plan"]
 }
 
 dependency "log_analytics" {
@@ -24,7 +24,7 @@ dependency "log_analytics" {
     id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mock-rg/providers/Microsoft.OperationalInsights/workspaces/mock-law"
   }
 
-  mock_outputs_allowed_terraform_commands = ["validate", "plan"]
+  mock_outputs_allowed_terraform_commands = ["init", "validate", "plan"]
 }
 
 locals {

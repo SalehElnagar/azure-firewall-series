@@ -20,6 +20,7 @@ spoke:
   address_space:
     - "10.20.0.0/24"
   dns_servers: []
+  use_firewall_dns_proxy: true
   subnets:
     workload:
       purpose: "workload"

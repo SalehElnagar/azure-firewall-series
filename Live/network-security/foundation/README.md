@@ -26,7 +26,7 @@ This Terragrunt stack prepares a policy-based Azure Firewall hub-and-spoke basel
   - `firewall.yaml`
   - `diagnostics.yaml`
   - `vm.yaml`
-- Subscription, backend, and remote module source settings live in [`../../subscription.yaml`](../../subscription.yaml).
+- Subscription, backend, and optional git module ref settings live in [`../../subscription.yaml`](../../subscription.yaml).
 
 ## Planning order
 
@@ -35,10 +35,10 @@ Run units in this order when reviewing or planning:
 1. `resource-group`
 2. `log-analytics`
 3. `hub-network`
-4. `spoke-network`
-5. `peering`
-6. `firewall-policy`
-7. `firewall`
+4. `firewall-policy`
+5. `firewall`
+6. `spoke-network`
+7. `peering`
 8. `routing`
 9. `diagnostics`
 10. `test-vm` if enabled
@@ -46,8 +46,9 @@ Run units in this order when reviewing or planning:
 ## Notes
 
 - `test-vm` uses the existing `linux_vm` module and is disabled by default via [`vm.yaml`](./vm.yaml).
-- The committed stack resolves deployable modules from the `azure-firewall-series` Git repo and defaults to the `article-01-foundation` ref. Set `TG_MODULE_REF=main` when validating before the release tag exists.
-- DNS proxy is enabled in the firewall policy so later articles can move toward FQDN-based network rules without redesigning the module interfaces.
+- The stack defaults to the local [`Modules/`](../../../Modules) tree so Terragrunt validates the code in this checkout. Set `TG_MODULE_SOURCE_PREFIX` to a git source if you want to consume a published module release instead.
+- `subscription.yaml` keeps the git ref value used when `TG_MODULE_SOURCE_PREFIX` points at a git source and now defaults that ref to `main`.
+- DNS proxy is enabled in the firewall policy, and the spoke VNet now points DNS at the firewall private IP when [`network.yaml`](./network.yaml) sets `spoke.use_firewall_dns_proxy: true`.
 - Resource names use the conventions module's mapped location short code. With `region.yaml` set to `centralus`, names will include `CUS` while Azure resource `location` remains `centralus`.
 - Backend state is stored in Azure Blob Storage and must exist before the first Terragrunt apply.
 - The flattened repo layout keeps `backend.state_key_prefix` set to `azure/mvp` so the published article paths do not require state migration.

@@ -4,7 +4,7 @@ include "root" {
 }
 
 terraform {
-  source = "${include.root.locals.module_source_prefix}/resource_group?ref=${include.root.locals.module_ref}"
+  source = "${include.root.locals.module_source_prefix}/resource_group${include.root.locals.module_source_ref_query}"
 }
 
 locals {

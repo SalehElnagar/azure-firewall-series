@@ -4,7 +4,7 @@ include "root" {
 }
 
 terraform {
-  source = "${include.root.locals.module_source_prefix}/route_table?ref=${include.root.locals.module_ref}"
+  source = "${include.root.locals.module_source_prefix}/route_table${include.root.locals.module_source_ref_query}"
 }
 
 dependency "resource_group" {
@@ -14,7 +14,7 @@ dependency "resource_group" {
     name = "RG-CUS-PLATFORM-1-FIREWALL-FOUNDATION-DEV"
   }
 
-  mock_outputs_allowed_terraform_commands = ["validate", "plan"]
+  mock_outputs_allowed_terraform_commands = ["init", "validate", "plan"]
 }
 
 dependency "spoke_network" {
@@ -30,7 +30,7 @@ dependency "spoke_network" {
     }
   }
 
-  mock_outputs_allowed_terraform_commands = ["validate", "plan"]
+  mock_outputs_allowed_terraform_commands = ["init", "validate", "plan"]
 }
 
 dependency "firewall" {
@@ -40,7 +40,7 @@ dependency "firewall" {
     private_ip_address = "10.10.0.4"
   }
 
-  mock_outputs_allowed_terraform_commands = ["validate", "plan"]
+  mock_outputs_allowed_terraform_commands = ["init", "validate", "plan"]
 }
 
 locals {

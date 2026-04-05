@@ -1,18 +1,37 @@
 locals {
-  live_root             = dirname(find_in_parent_folders("root.hcl"))
-  common                = yamldecode(file(find_in_parent_folders("common.yaml")))
-  subscription          = yamldecode(file(find_in_parent_folders("subscription.yaml")))
-  module_source_prefix  = try(local.subscription.modules.source_prefix, "git::ssh://git@github.com/SalehElnagar/azure-firewall-series.git//Modules")
-  module_ref            = get_env("TG_MODULE_REF", try(local.subscription.modules.ref, "article-01-foundation"))
-  state_key_prefix      = trim(try(local.subscription.backend.state_key_prefix, ""), "/")
+  live_root                  = dirname(find_in_parent_folders("root.hcl"))
+  repo_root                  = dirname(local.live_root)
+  common                     = yamldecode(file(find_in_parent_folders("common.yaml")))
+  subscription_base          = yamldecode(file(find_in_parent_folders("subscription.yaml")))
+  subscription_override_path = "${local.live_root}/subscription.local.yaml"
+  subscription_override      = try(yamldecode(file(local.subscription_override_path)), {})
+  subscription = merge(
+    local.subscription_base,
+    local.subscription_override,
+    {
+      backend = merge(
+        try(local.subscription_base.backend, {}),
+        try(local.subscription_override.backend, {})
+      )
+      modules = merge(
+        try(local.subscription_base.modules, {}),
+        try(local.subscription_override.modules, {})
+      )
+    }
+  )
+  module_source_prefix    = get_env("TG_MODULE_SOURCE_PREFIX", try(local.subscription.modules.source_prefix, "${local.repo_root}/Modules"))
+  module_ref              = get_env("TG_MODULE_REF", try(local.subscription.modules.ref, "article-02-foundation-v3"))
+  module_source_is_git    = length(regexall("^(git::|github\\.com/|git@|ssh://|https://|http://)", local.module_source_prefix)) > 0
+  module_source_ref_query = local.module_source_is_git ? "?ref=${local.module_ref}" : ""
+  state_key_prefix        = trim(try(local.subscription.backend.state_key_prefix, ""), "/")
 
-  env          = yamldecode(file(find_in_parent_folders("env.yaml")))
-  region       = yamldecode(file(find_in_parent_folders("region.yaml")))
-  tags_config  = yamldecode(file(find_in_parent_folders("tags.yaml")))
-  network      = try(yamldecode(file(find_in_parent_folders("network.yaml"))), {})
-  firewall     = try(yamldecode(file(find_in_parent_folders("firewall.yaml"))), {})
-  diagnostics  = try(yamldecode(file(find_in_parent_folders("diagnostics.yaml"))), {})
-  vm           = try(yamldecode(file(find_in_parent_folders("vm.yaml"))), {})
+  env         = yamldecode(file(find_in_parent_folders("env.yaml")))
+  region      = yamldecode(file(find_in_parent_folders("region.yaml")))
+  tags_config = yamldecode(file(find_in_parent_folders("tags.yaml")))
+  network     = try(yamldecode(file(find_in_parent_folders("network.yaml"))), {})
+  firewall    = try(yamldecode(file(find_in_parent_folders("firewall.yaml"))), {})
+  diagnostics = try(yamldecode(file(find_in_parent_folders("diagnostics.yaml"))), {})
+  vm          = try(yamldecode(file(find_in_parent_folders("vm.yaml"))), {})
 
   foundation = local.env.foundation
 

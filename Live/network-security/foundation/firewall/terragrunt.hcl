@@ -4,7 +4,7 @@ include "root" {
 }
 
 terraform {
-  source = "${include.root.locals.module_source_prefix}/azure_firewall_v2?ref=${include.root.locals.module_ref}"
+  source = "${include.root.locals.module_source_prefix}/azure_firewall_v2${include.root.locals.module_source_ref_query}"
 }
 
 dependency "resource_group" {
@@ -14,7 +14,7 @@ dependency "resource_group" {
     name = "RG-CUS-PLATFORM-1-FIREWALL-FOUNDATION-DEV"
   }
 
-  mock_outputs_allowed_terraform_commands = ["validate", "plan"]
+  mock_outputs_allowed_terraform_commands = ["init", "validate", "plan"]
 }
 
 dependency "hub_network" {
@@ -30,7 +30,7 @@ dependency "hub_network" {
     }
   }
 
-  mock_outputs_allowed_terraform_commands = ["validate", "plan"]
+  mock_outputs_allowed_terraform_commands = ["init", "validate", "plan"]
 }
 
 dependency "firewall_policy" {
@@ -40,7 +40,7 @@ dependency "firewall_policy" {
     id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mock-rg/providers/Microsoft.Network/firewallPolicies/mock-policy"
   }
 
-  mock_outputs_allowed_terraform_commands = ["validate", "plan"]
+  mock_outputs_allowed_terraform_commands = ["init", "validate", "plan"]
 }
 
 locals {
